@@ -37,13 +37,13 @@ class AppConstants {
     /** 新規作成 */
     const ROOT_DIR_CREATE = 'create';
     /** パスワードリセット */
-    const ROOT_DIR_PASSWORD_RESET = 'password-reset';
+    const ROOT_DIR_PASSWORD_RESET = 'passwordReset';
     /** ホーム画面（Vue） */
     const ROOT_DIR_HOME = 'home';
     /** 新規作成（仮） */
-    const ROOT_DIR_CREATE_PRE = self::ROOT_DIR_CREATE . '-pre';
+    const ROOT_DIR_CREATE_PRE = self::ROOT_DIR_CREATE . 'Pre';
     /** パスワードリセット（仮） */
-    const ROOT_DIR_PASSWORD_RESET_PRE = self::ROOT_DIR_PASSWORD_RESET . '-pre';
+    const ROOT_DIR_PASSWORD_RESET_PRE = self::ROOT_DIR_PASSWORD_RESET . 'Pre';
     /** パスワードリセット（仮登録） */
     const ROOT_DIR_USERS_PASSWORD_RESET_PRE = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_PASSWORD_RESET_PRE;
     /** パスワードリセット */

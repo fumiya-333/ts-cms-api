@@ -39,6 +39,7 @@ class BaseRequest extends FormRequest
     protected $req_attributes = [];
 
     protected function failedValidation(Validator $validator) {
-        throw new HttpResponseException(response()->error([AppConstants::KEY_ERR => $validator->errors()]));
+        $response = implode('\n', $validator->errors()->all());
+        throw new HttpResponseException(response()->error([AppConstants::KEY_MSG => $response]));
     }
 }

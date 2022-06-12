@@ -25,8 +25,8 @@ class ApiResponseServiceProvider extends ServiceProvider
         Response::macro(AppConstants::KEY_ERR, function ($error) {
             return response()->json([
                 AppConstants::KEY_SUCCESS => false,
-                AppConstants::KEY_ERR => $error
-            ], 400);
+                AppConstants::KEY_RESPONSE => $error
+            ]);
         });
     }
 }
