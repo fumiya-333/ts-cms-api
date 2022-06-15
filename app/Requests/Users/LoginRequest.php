@@ -1,9 +1,11 @@
 <?php
 namespace App\Requests\Users;
 
-use App\Requests\UserRequest;
+use App\Requests\BaseRequest;
+use App\Models\MUser;
+use App\Rules\EmailVerificationRule;
 
-class LoginRequest extends UserRequest
+class LoginRequest extends BaseRequest
 {
     /**
      * ユーザーがこのリクエストの権限を持っているかを判断する
@@ -20,6 +22,8 @@ class LoginRequest extends UserRequest
      * @return array
      */
     public function rules(){
+        $this->req_rules[MUser::COL_EMAIL] = [self::VALIDATION_RULE_KEY_REQUIRED, MUser::COL_EMAIL, new EmailVerificationRule($this->input(MUser::COL_EMAIL))];
+        $this->req_rules[MUser::COL_PASSWORD] = self::VALIDATION_RULE_KEY_REQUIRED;
         return $this->req_rules;
     }
 
@@ -29,6 +33,9 @@ class LoginRequest extends UserRequest
      * @return array
      */
     public function messages(){
+        $this->req_messages[MUser::COL_EMAIL . '.' . self::VALIDATION_RULE_KEY_REQUIRED] = self::VALIDATION_ATTRIBUTE . self::ERR_MSG_REQUIRED;
+        $this->req_messages[MUser::COL_EMAIL . '.' . MUser::COL_EMAIL] = '有効な' . self::VALIDATION_ATTRIBUTE . self::ERR_MSG_REQUIRED;
+        $this->req_messages[MUser::COL_PASSWORD . '.' . self::VALIDATION_RULE_KEY_REQUIRED] = self::VALIDATION_ATTRIBUTE . self::ERR_MSG_REQUIRED;
         return $this->req_messages;
     }
 
@@ -38,6 +45,8 @@ class LoginRequest extends UserRequest
      * @return array
      */
     public function attributes(){
+        $this->req_attributes[MUser::COL_EMAIL] = MUser::COL_JP_EMAIL;
+        $this->req_attributes[MUser::COL_PASSWORD] = MUser::COL_JP_PASSWORD;
         return $this->req_attributes;
     }
 }

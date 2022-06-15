@@ -32,6 +32,7 @@ class PasswordResetPreRequest extends BaseRequest
      * @return array
      */
     public function messages(){
+        $this->req_messages[MUser::COL_EMAIL . '.' . self::VALIDATION_RULE_KEY_REQUIRED] = self::VALIDATION_ATTRIBUTE . self::ERR_MSG_REQUIRED;
         $this->req_messages[MUser::COL_EMAIL . '.' . MUser::COL_EMAIL] = '有効な' . self::VALIDATION_ATTRIBUTE . self::ERR_MSG_REQUIRED;
         return $this->req_messages;
     }
@@ -42,6 +43,7 @@ class PasswordResetPreRequest extends BaseRequest
      * @return array
      */
     public function attributes(){
+        $this->req_attributes[MUser::COL_EMAIL] = MUser::COL_JP_EMAIL;
         return $this->req_attributes;
     }
 }

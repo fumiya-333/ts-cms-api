@@ -7,7 +7,9 @@ use App\Models\MUser;
 class EmailExistsRule implements Rule
 {
     /** 未登録のメールアドレス */
-    const ERR_MSG = "未登録のメールアドレスです。本登録を完了させて下さい。";
+    const ERR_MSG_NOT_EXISTS = "未登録のメールアドレスです。";
+    /** 未登録のメールアドレス */
+    const ERR_MSG_EMAIL_VERIFIED_OFF = "仮登録済のメールアドレスです。メールにて本登録を完了させて下さい。";
 
     /** メールアドレス */
     private $email;
@@ -28,11 +30,18 @@ class EmailExistsRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        // 未作成のメールアドレスか判定
+        // メールアドレスが登録されているか判定
         if(!$this->m_user->count()){
-            $this->msg = self::ERR_MSG;
+            $this->msg .= self::ERR_MSG_NOT_EXISTS;
             return false;
         }
+
+        // 本登録されているか判定
+        if(!$this->m_user->email_verified){
+            $this->msg .= self::ERR_MSG_EMAIL_VERIFIED_OFF;
+            return false;
+        }
+
         return true;
     }
 
