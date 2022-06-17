@@ -2,6 +2,7 @@
 
 namespace App\Repositories\BusinessLogics;
 
+use Illuminate\Support\Facades\DB;
 use App\Requests\Users\CreateRequest;
 use App\Interfaces\BusinessLogics\CreateRepositoryInterface;
 use App\Interfaces\Models\MUserRepositoryInterface;
@@ -21,6 +22,15 @@ class CreateRepository implements CreateRepositoryInterface
         $this->m_user_repository = $m_user_repository;
     }
 
+    /**
+     * メールアドレスURLトークンに紐づくユーザー情報取得
+     *
+     * @param  mixed $email_verify_token メールアドレスURLトークン
+     * @return void
+     */
+    public function emailVerifyTokenFindUser(String $email_verify_token) {
+        return $this->m_user_repository->emailVerifyTokenFindUser($email_verify_token);
+    }
 
     /**
      * 本登録処理実行
@@ -30,16 +40,19 @@ class CreateRepository implements CreateRepositoryInterface
      * @return void
      */
     public function exec(CreateRequest $request, &$msg) {
-        // メールアドレスURLトークンに紐づくユーザー情報取得
-        $m_user = $this->m_user_repository->emailVerifyTokenFindUser($request->email_verify_token);
 
-        // 本登録処理
-        if($this->m_user_repository->updateEmailVerified($m_user, $request->email_verified)){
-            $msg .= self::INFO_MSG_USER_REGIST_SUCCESS;
-            return true;
-        }
+        DB::transaction(function () use ($request, &$msg) {
 
-        $msg .= self::ERR_MSG_USER_REGIST_FAILED;
-        return false;
+            // メールアドレスに紐づくユーザー情報取得
+            $m_user = $this->m_user_repository->emailFindUser($request->email);
+
+            // 本登録処理
+            if($this->m_user_repository->updateVerifiedPassword($m_user, $request)){
+                $msg .= self::INFO_MSG_USER_REGIST_SUCCESS;
+            }else{
+                $msg .= self::ERR_MSG_USER_REGIST_FAILED;
+            }
+
+        });
     }
 }

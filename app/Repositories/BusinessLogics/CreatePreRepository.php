@@ -38,11 +38,11 @@ class CreatePreRepository implements CreatePreRepositoryInterface
         DB::transaction(function () use ($request) {
 
             // ユーザー情報登録
-            $m_user = $this->m_user_repository->create(
+            $m_user = $this->m_user_repository->createPre(
                 StrUtil::getUuid(),
                 $request->name,
                 $request->email,
-                bcrypt($request->password),
+                '',
                 MUser::EMAIL_VERIFIED_OFF,
                 StrUtil::getUuid(),
                 new Carbon(),
@@ -50,7 +50,7 @@ class CreatePreRepository implements CreatePreRepositoryInterface
 
             $variables = [MUser::COL_EMAIL => $m_user->email, MUser::COL_EMAIL_VERIFY_TOKEN => $m_user->email_verify_token];
             // メール送信処理実行
-            $email = $this->send_mail_repository->exec($m_user->email, TSendMail::CREATE_PRE_EMAIL_SUBJECT, $variables, 'emails.create-pre');
+            $email = $this->send_mail_repository->exec($m_user->email, TSendMail::CREATE_PRE_EMAIL_SUBJECT, $variables, 'emails.createPre');
 
             // メール送信情報登録
             $this->t_send_mail_repository->create(StrUtil::getUuid(), $m_user->email, TSendMail::CREATE_PRE_EMAIL_SUBJECT, $email->getMessage());

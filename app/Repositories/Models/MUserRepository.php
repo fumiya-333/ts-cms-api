@@ -9,7 +9,7 @@ use Carbon\Carbon;
 class MUserRepository implements MUserRepositoryInterface
 {
     /**
-     * ユーザー情報登録
+     * ユーザー情報仮登録
      *
      * @param  mixed $user_id ユーザーID
      * @param  mixed $name 氏名
@@ -20,7 +20,7 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $email_verified_at メール認証発行日
      * @return void
      */
-    public function create(string $user_id, $name, $email, $password, $email_verified, $email_verify_token, $email_verified_at) {
+    public function createPre(string $user_id, $name, $email, $password, $email_verified, $email_verify_token, $email_verified_at) {
         return MUser::create([
             MUser::COL_USER_ID => $user_id,
             MUser::COL_NAME => $name,
@@ -53,26 +53,27 @@ class MUserRepository implements MUserRepositoryInterface
     }
 
     /**
-     * メールアドレスURLトークンの更新
+     * 本登録（パスワードの更新）
      *
      * @param  mixed $m_user ユーザー情報
      * @param  mixed $request リクエストパラメータ
      * @return void
      */
-    public function updateEmailVerified($m_user, $request){
+    public function updateVerifiedPassword($m_user, $request){
+        $m_user->password = bcrypt($request->password);
         $m_user->email_verified = MUser::EMAIL_VERIFIED_ON;
         return $m_user->save();
     }
 
     /**
-     * パスワードリセット情報更新
+     * パスワードリセットトークン情報更新
      *
      * @param  mixed $m_user ユーザー情報
      * @param  mixed $email_password_reset_verified パスワードリセットメール認証フラグ
      * @param  mixed $email_password_reset_token パスワードリセットメールアドレスURLトークン
      * @return void
      */
-    public function updatePasswordReset($m_user, $email_password_reset_verified, $email_password_reset_token){
+    public function updatePasswordResetToken($m_user, $email_password_reset_verified, $email_password_reset_token){
         $m_user->email_password_reset_verified = $email_password_reset_verified;
         $m_user->email_password_reset_token = $email_password_reset_token;
         $m_user->email_password_reset_at = new Carbon();

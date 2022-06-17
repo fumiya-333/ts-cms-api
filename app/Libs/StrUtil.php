@@ -29,9 +29,19 @@ class StrUtil {
      * ハッシュ値への変換
      *
      * @param  mixed $str 文字列
-     * @return 文字列変換ハッシュ値
+     * @return ハッシュ値
      */
     public static function convToHash($str){
         return hash(AppConstants::HASH_KEY_SHA256, uniqid($str, true));
+    }
+
+    /**
+     * キャメルケースに変換
+     *
+     * @param  mixed $str 文字列
+     * @return void キャメルケース変換後文字列
+     */
+    public static function convToCamel($str) {
+        return Str::camel($str);
     }
 }

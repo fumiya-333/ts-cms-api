@@ -3,9 +3,9 @@ namespace App\Requests\Users;
 
 use App\Requests\BaseRequest;
 use App\Models\MUser;
-use App\Rules\EmailCreateAuthRule;
+use App\Rules\EmailExistsRule;
 
-class CreateRequest extends BaseRequest
+class PasswordResetRequest extends BaseRequest
 {
     /**
      * ユーザーがこのリクエストの権限を持っているかを判断する
@@ -22,7 +22,7 @@ class CreateRequest extends BaseRequest
      * @return array
      */
     public function rules(){
-        $this->req_rules[MUser::COL_EMAIL] = [MUser::COL_EMAIL, new EmailCreateAuthRule($this->input(MUser::COL_EMAIL))];
+        $this->req_rules[MUser::COL_EMAIL] = [self::VALIDATION_RULE_KEY_REQUIRED, MUser::COL_EMAIL, new EmailExistsRule($this->input(MUser::COL_EMAIL))];
         return $this->req_rules;
     }
 
@@ -32,6 +32,8 @@ class CreateRequest extends BaseRequest
      * @return array
      */
     public function messages(){
+        $this->req_messages[MUser::COL_EMAIL . '.' . self::VALIDATION_RULE_KEY_REQUIRED] = self::VALIDATION_ATTRIBUTE . self::ERR_MSG_REQUIRED;
+        $this->req_messages[MUser::COL_EMAIL . '.' . MUser::COL_EMAIL] = '有効な' . self::VALIDATION_ATTRIBUTE . self::ERR_MSG_REQUIRED;
         return $this->req_messages;
     }
 
@@ -41,6 +43,7 @@ class CreateRequest extends BaseRequest
      * @return array
      */
     public function attributes(){
+        $this->req_attributes[MUser::COL_EMAIL] = MUser::COL_JP_EMAIL;
         return $this->req_attributes;
     }
 }

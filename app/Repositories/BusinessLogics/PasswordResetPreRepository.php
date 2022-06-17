@@ -39,12 +39,12 @@ class PasswordResetPreRepository implements PasswordResetPreRepositoryInterface
             // メールアドレスに紐づくユーザー情報取得
             $m_user = $this->m_user_repository->emailFindUser($request->email);
 
-            // パスワードリセット情報登録
-            $this->m_user_repository->updatePasswordReset($m_user, MUser::EMAIL_PASSWORD_RESET_VERIFIED_OFF, StrUtil::convToHash($request->password));
+            // パスワードリセットトークン情報登録
+            $this->m_user_repository->updatePasswordResetToken($m_user, MUser::EMAIL_PASSWORD_RESET_VERIFIED_OFF, StrUtil::convToHash($request->password));
 
             // メール送信処理実行
             $variables = [MUser::COL_EMAIL => $m_user->email, MUser::COL_EMAIL_PASSWORD_RESET_TOKEN  => $m_user->email_password_reset_token];
-            $email = $this->send_mail_repository->exec($m_user->email, TSendMail::PASSWORD_RESET_EMAIL_SUBJECT, $variables, 'emails.password-reset-pre');
+            $email = $this->send_mail_repository->exec($m_user->email, TSendMail::PASSWORD_RESET_EMAIL_SUBJECT, $variables, 'emails.passwordResetPre');
 
             // メール送信情報登録
             $this->t_send_mail_repository->create(StrUtil::getUuid(), $m_user->email, TSendMail::PASSWORD_RESET_EMAIL_SUBJECT, $email->getMessage());

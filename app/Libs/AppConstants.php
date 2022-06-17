@@ -34,16 +34,18 @@ class AppConstants {
     /********************************************
     /** ユーザー */
     const ROOT_DIR_USERS = 'users';
+    /** ログイン */
+    const ROOT_DIR_LOGIN = 'login';
     /** 新規作成 */
     const ROOT_DIR_CREATE = 'create';
     /** パスワードリセット */
     const ROOT_DIR_PASSWORD_RESET = 'passwordReset';
-    /** ホーム画面（Vue） */
-    const ROOT_DIR_HOME = 'home';
     /** 新規作成（仮） */
     const ROOT_DIR_CREATE_PRE = self::ROOT_DIR_CREATE . 'Pre';
     /** パスワードリセット（仮） */
     const ROOT_DIR_PASSWORD_RESET_PRE = self::ROOT_DIR_PASSWORD_RESET . 'Pre';
+    /** ログイン */
+    const ROOT_DIR_USERS_LOGIN = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_LOGIN;
     /** パスワードリセット（仮登録） */
     const ROOT_DIR_USERS_PASSWORD_RESET_PRE = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_PASSWORD_RESET_PRE;
     /** パスワードリセット */
