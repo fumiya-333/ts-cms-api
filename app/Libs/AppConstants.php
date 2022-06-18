@@ -54,4 +54,7 @@ class AppConstants {
     const ROOT_DIR_USERS_CREATE_PRE = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_CREATE_PRE;
     /** ユーザー新規作成 */
     const ROOT_DIR_USERS_CREATE = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_CREATE;
+
+    /** エラーメッセージ */
+    const ERR_MSG = "エラーが発生しました。";
 }

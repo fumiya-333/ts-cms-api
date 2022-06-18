@@ -53,13 +53,23 @@ class MUserRepository implements MUserRepositoryInterface
     }
 
     /**
+     * パスワードリセットメールアドレスURLトークンに紐づくユーザー情報取得
+     *
+     * @param  mixed $email_password_reset_token パスワードリセットメールアドレスURLトークン
+     * @return ユーザー情報
+     */
+    public function emailPasswordResetTokenFindUser($email_password_reset_token){
+        return MUser::emailPasswordResetTokenFindUser($email_password_reset_token);
+    }
+
+    /**
      * 本登録（パスワードの更新）
      *
      * @param  mixed $m_user ユーザー情報
      * @param  mixed $request リクエストパラメータ
      * @return void
      */
-    public function updateVerifiedPassword($m_user, $request){
+    public function updateEmailVerifiedPassword($m_user, $request){
         $m_user->password = bcrypt($request->password);
         $m_user->email_verified = MUser::EMAIL_VERIFIED_ON;
         return $m_user->save();
@@ -69,14 +79,26 @@ class MUserRepository implements MUserRepositoryInterface
      * パスワードリセットトークン情報更新
      *
      * @param  mixed $m_user ユーザー情報
-     * @param  mixed $email_password_reset_verified パスワードリセットメール認証フラグ
      * @param  mixed $email_password_reset_token パスワードリセットメールアドレスURLトークン
      * @return void
      */
-    public function updatePasswordResetToken($m_user, $email_password_reset_verified, $email_password_reset_token){
-        $m_user->email_password_reset_verified = $email_password_reset_verified;
+    public function updatePasswordResetToken($m_user, $email_password_reset_token){
+        $m_user->email_password_reset_verified = MUser::EMAIL_PASSWORD_RESET_VERIFIED_OFF;
         $m_user->email_password_reset_token = $email_password_reset_token;
         $m_user->email_password_reset_at = new Carbon();
+        return $m_user->save();
+    }
+
+    /**
+     * パスワードリセット実行
+     *
+     * @param  mixed $m_user ユーザー情報
+     * @param  mixed $password パスワード
+     * @return void
+     */
+    public function updatePasswordReset($m_user, $password){
+        $m_user->password = bcrypt($password);
+        $m_user->email_password_reset_verified = MUser::EMAIL_PASSWORD_RESET_VERIFIED_ON;
         return $m_user->save();
     }
 }

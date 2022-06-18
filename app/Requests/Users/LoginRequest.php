@@ -22,7 +22,7 @@ class LoginRequest extends BaseRequest
      * @return array
      */
     public function rules(){
-        $this->req_rules[MUser::COL_EMAIL] = [self::VALIDATION_RULE_KEY_REQUIRED, MUser::COL_EMAIL, new EmailVerificationRule($this->input(MUser::COL_EMAIL))];
+        $this->req_rules[MUser::COL_EMAIL] = self::VALIDATION_RULE_KEY_REQUIRED;
         $this->req_rules[MUser::COL_PASSWORD] = self::VALIDATION_RULE_KEY_REQUIRED;
         return $this->req_rules;
     }

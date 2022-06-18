@@ -21,7 +21,6 @@ class PasswordResetRepository implements PasswordResetRepositoryInterface
         $this->m_user_repository = $m_user_repository;
     }
 
-
     /**
      * 本登録処理実行
      *
@@ -34,7 +33,7 @@ class PasswordResetRepository implements PasswordResetRepositoryInterface
         $m_user = $this->m_user_repository->emailVerifyTokenFindUser($request->email_verify_token);
 
         // 本登録処理
-        if($this->m_user_repository->updateEmailVerified($m_user, $request->email_verified)){
+        if($this->m_user_repository->updatePasswordReset($m_user, $request->password)){
             $msg .= self::INFO_MSG_USER_REGIST_SUCCESS;
             return true;
         }

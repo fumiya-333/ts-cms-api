@@ -39,9 +39,19 @@ class StrUtil {
      * キャメルケースに変換
      *
      * @param  mixed $str 文字列
-     * @return void キャメルケース変換後文字列
+     * @return キャメルケース変換後文字列
      */
     public static function convToCamel($str) {
         return Str::camel($str);
+    }
+
+    /**
+     * 文字列の長さを取得
+     *
+     * @param  mixed $str 文字列
+     * @return 文字列の長さ
+     */
+    public static function length($str) {
+        return Str::length($str);
     }
 }
