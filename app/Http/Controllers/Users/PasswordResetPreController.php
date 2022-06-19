@@ -25,7 +25,11 @@ class PasswordResetPreController extends Controller
     {
         $msg = '';
         try {
-            $this->password_reset_pre_repository->exec($request, $msg);
+            if (!$this->password_reset_pre_repository->exec($request, $msg)) {
+                return response()->error([
+                    AppConstants::KEY_MSG => $msg,
+                ]);
+            }
         } catch (\Exception $e) {
             return response()->error([
                 AppConstants::KEY_MSG => AppConstants::ERR_MSG,

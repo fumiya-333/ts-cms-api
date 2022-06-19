@@ -5,7 +5,6 @@ namespace App\Repositories\Models;
 use App\Interfaces\Models\MUserRepositoryInterface;
 use App\Models\MUser;
 use Carbon\Carbon;
-use App\Libs\DateUtil;
 use App\Libs\AppConstants;
 
 class MUserRepository implements MUserRepositoryInterface
@@ -81,33 +80,6 @@ class MUserRepository implements MUserRepositoryInterface
     public function emailVerifyTokenFindUser($email_verify_token)
     {
         return MUser::emailVerifyTokenFindUser($email_verify_token);
-    }
-
-    /**
-     * 本登録判定
-     *
-     * @param  mixed $m_user ユーザー情報
-     * @param  mixed $msg エラーメッセージ
-     * @return 本登録判定フラグ
-     */
-    public function isCreated($m_user, &$msg)
-    {
-        // 登録されているトークンか判定
-        if (!$m_user->count()) {
-            $msg .= AppConstants::ERR_MSG_EMAIL_VERIFY_TOKEN_VALID;
-            return false;
-        }
-        // 本登録されているか判定
-        if ($m_user->email_verified) {
-            $msg .= AppConstants::ERR_MSG_USER_REGIST_COMPLETED;
-            return false;
-        }
-        // メール認証の発行から、1日以上経過している場合
-        if (DateUtil::isAddDay($m_user->email_verified_at)) {
-            $msg .= AppConstants::ERR_MSG_EMAIL_AUTH_24HOURS_PASSED;
-            return false;
-        }
-        return true;
     }
 
     /**

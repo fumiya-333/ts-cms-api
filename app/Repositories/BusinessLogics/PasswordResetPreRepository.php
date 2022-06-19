@@ -38,44 +38,41 @@ class PasswordResetPreRepository implements PasswordResetPreRepositoryInterface
     {
         $m_user = new MUser();
         // バリデーション処理
-        if (self::validate($request, $msg, $m_user)) {
+        if (self::validate($request, $m_user)) {
             // 仮更新処理実行
             self::update($request, $m_user);
         } else {
-            return;
+            $msg = self::ERR_MSG_NOT_EXISTS;
+            return false;
         }
         $msg = self::INFO_MSG;
+        return true;
     }
 
     /**
      * バリデーション処理
      *
      * @param  mixed $request リクエストパラメータ
-     * @param  mixed $msg エラーメッセージ
+     * @param  mixed $m_user ユーザー情報
      * @return バリデーション判定フラグ
      */
-    public function validate(PasswordResetPreRequest $request, &$msg, &$m_user)
+    public function validate(PasswordResetPreRequest $request, &$m_user)
     {
         $m_user = $this->m_user_repository->emailFindUser($request->email);
         // 既にデータ作成されているか判定
-        if ($m_user->count()) {
-            $msg = self::ERR_MSG_NOT_EXISTS;
-            return false;
-        }
-        return true;
+        return $m_user->count();
     }
 
     /**
      * パスワード更新
      *
      * @param  mixed $request リクエストパラメータ
-     * @param  mixed $msg エラーメッセージ
      * @param  mixed $m_user ユーザー情報
      * @return void
      */
-    public function update(PasswordResetPreRequest $request, &$m_user)
+    public function update(PasswordResetPreRequest $request, $m_user)
     {
-        DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request, $m_user) {
             // パスワードリセットトークン情報登録
             $this->m_user_repository->updatePasswordResetToken($m_user, StrUtil::getUuid());
 

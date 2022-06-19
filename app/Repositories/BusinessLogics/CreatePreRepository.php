@@ -52,6 +52,7 @@ class CreatePreRepository implements CreatePreRepositoryInterface
             self::update($request, $m_user);
         }
         $msg = self::INFO_MSG;
+        return true;
     }
 
     /**
@@ -65,10 +66,7 @@ class CreatePreRepository implements CreatePreRepositoryInterface
     {
         $m_user = $this->m_user_repository->emailFindUser($request->email);
         // 既にデータ作成されているか判定
-        if ($m_user->count()) {
-            return false;
-        }
-        return true;
+        return !$m_user->count();
     }
 
     /**
@@ -90,7 +88,6 @@ class CreatePreRepository implements CreatePreRepositoryInterface
                 StrUtil::getUuid(),
                 new Carbon()
             );
-
             // メール送信・情報登録
             self::sendWithStoreMail($m_user);
         });
@@ -105,15 +102,17 @@ class CreatePreRepository implements CreatePreRepositoryInterface
      */
     public function update(CreatePreRequest $request, $m_user)
     {
-        $this->m_user_repository->update(
-            $m_user,
-            $request->name,
-            MUser::EMAIL_VERIFIED_OFF,
-            StrUtil::getUuid(),
-            new Carbon()
-        );
-        // メール送信・情報登録
-        self::sendWithStoreMail($m_user);
+        DB::transaction(function () use ($request, $m_user) {
+            $this->m_user_repository->update(
+                $m_user,
+                $request->name,
+                MUser::EMAIL_VERIFIED_OFF,
+                StrUtil::getUuid(),
+                new Carbon()
+            );
+            // メール送信・情報登録
+            self::sendWithStoreMail($m_user);
+        });
     }
 
     /**

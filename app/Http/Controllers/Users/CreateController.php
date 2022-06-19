@@ -56,12 +56,10 @@ class CreateController extends Controller
     {
         $msg = '';
         try {
-            // バリデーション処理
-            if ($this->create_repository->validate($request, $msg)) {
-                // 本登録処理実行
-                $this->create_repository->exec($request, $msg);
-            } else {
-                return response()->error([AppConstants::KEY_MSG => $msg]);
+            if (!$this->create_repository->exec($request, $msg)) {
+                return response()->error([
+                    AppConstants::KEY_MSG => $msg,
+                ]);
             }
         } catch (\Exception $e) {
             return response()->error([

@@ -57,10 +57,4 @@ class AppConstants
 
     /** エラーメッセージ */
     const ERR_MSG = 'エラーが発生しました。';
-    /** 無効なトークン */
-    const ERR_MSG_EMAIL_VERIFY_TOKEN_VALID = '無効なトークンです。URLが途切れていないかご確認下さい。';
-    /** 本登録済み */
-    const ERR_MSG_USER_REGIST_COMPLETED = '既に本登録されています。ログインを行いご利用下さい。';
-    /** メール認証発効後24時間以上経過 */
-    const ERR_MSG_EMAIL_AUTH_24HOURS_PASSED = 'メール認証の発行から24時間以上経過しています。再度アカウント設定を行って下さい。';
 }
