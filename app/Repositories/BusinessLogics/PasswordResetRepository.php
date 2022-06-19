@@ -28,7 +28,7 @@ class PasswordResetRepository implements PasswordResetRepositoryInterface
      * @param  mixed $msg メッセージ
      * @return void
      */
-    public function exec(CreateRequest $request, &$msg) {
+    public function exec(PasswordResetRequest $request, &$msg) {
         // メールアドレスURLトークンに紐づくユーザー情報取得
         $m_user = $this->m_user_repository->emailVerifyTokenFindUser($request->email_verify_token);
 

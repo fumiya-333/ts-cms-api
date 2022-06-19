@@ -3,7 +3,6 @@ namespace App\Requests\Users;
 
 use App\Requests\BaseRequest;
 use App\Models\MUser;
-use App\Rules\EmailExistsRule;
 
 class PasswordResetPreRequest extends BaseRequest
 {
@@ -22,7 +21,7 @@ class PasswordResetPreRequest extends BaseRequest
      * @return array
      */
     public function rules(){
-        $this->req_rules[MUser::COL_EMAIL] = [self::VALIDATION_RULE_KEY_REQUIRED, MUser::COL_EMAIL, new EmailExistsRule($this->input(MUser::COL_EMAIL))];
+        $this->req_rules[MUser::COL_EMAIL] = self::VALIDATION_RULE_KEY_REQUIRED;
         return $this->req_rules;
     }
 

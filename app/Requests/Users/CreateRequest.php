@@ -3,7 +3,6 @@ namespace App\Requests\Users;
 
 use App\Requests\BaseRequest;
 use App\Models\MUser;
-use App\Rules\EmailCreateAuthRule;
 
 class CreateRequest extends BaseRequest
 {

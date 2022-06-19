@@ -11,15 +11,31 @@ use App\Models\MUser;
 class CreateRepository implements CreateRepositoryInterface
 {
     /** ユーザー情報本登録完了 */
-    const INFO_MSG_USER_REGIST_SUCCESS = 'ユーザー情報の本登録が完了しました。ログインを行いご利用下さい。';
+    const INFO_MSG_USER_REGIST_SUCCESS = '本登録が完了しました。';
     /** ユーザー情報本登録失敗 */
-    const ERR_MSG_USER_REGIST_FAILED = 'ユーザー情報の本登録に失敗しました。管理者に連絡を行って下さい。';
+    const ERR_MSG_USER_REGIST_FAILED = '本登録に失敗しました。';
 
     private MUserRepositoryInterface $m_user_repository;
 
     public function __construct(MUserRepositoryInterface $m_user_repository)
     {
         $this->m_user_repository = $m_user_repository;
+    }
+
+    /**
+     * バリデーション処理
+     *
+     * @param  mixed $request リクエストパラメータ
+     * @param  mixed $msg エラーメッセージ
+     * @return バリデーション判定フラグ
+     */
+    public function validate(CreateRequest $request, &$msg){
+        $m_user = $this->m_user_repository->emailFindUser($request->email);
+        // 本登録メール判定
+        if(!$this->m_user_repository->isCreated($m_user, $msg)){
+            return false;
+        }
+        return true;
     }
 
     /**

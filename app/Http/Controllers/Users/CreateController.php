@@ -5,10 +5,10 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use App\Libs\AppConstants;
+use App\Libs\StrUtil;
 use App\Interfaces\BusinessLogics\CreateRepositoryInterface;
 use App\Interfaces\Models\MUserRepositoryInterface;
 use App\Requests\Users\CreateRequest;
-use App\Libs\StrUtil;
 use App\Models\MUser;
 
 class CreateController extends Controller
@@ -46,10 +46,15 @@ class CreateController extends Controller
     public function store(CreateRequest $request){
         $msg = "";
         try {
-            // 本登録処理実行
-            $this->create_repository->exec($request, $msg);
+            // バリデーション処理
+            if($this->create_repository->validate($request, $msg)){
+                // 本登録処理実行
+                $this->create_repository->exec($request, $msg);
+            }else{
+                return response()->error([AppConstants::KEY_MSG => $msg]);
+            }
         } catch (\Exception $e) {
-            return response()->error([AppConstants::KEY_MSG => $msg, AppConstants::KEY_LOG => $e->getMessage()]);
+            return response()->error([AppConstants::KEY_MSG => AppConstants::ERR_MSG, AppConstants::KEY_LOG => $e->getMessage()]);
         }
         return response()->success([AppConstants::KEY_MSG => $msg]);
     }

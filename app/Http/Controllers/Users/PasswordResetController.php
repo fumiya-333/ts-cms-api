@@ -13,19 +13,12 @@ use App\Models\MUser;
 
 class PasswordResetController extends Controller
 {
-    /** 完了メッセージ */
-    const INFO_MSG = '本登録が完了いたしました。';
-
-    /** エラーメッセージ */
-    const ERR_MSG = '本登録に失敗しました。管理者にご連絡下さい。';
-
     private PasswordResetRepositoryInterface $password_reset_repository;
     private MUserRepositoryInterface $m_user_repository;
 
-    // PasswordResetRepositoryInterface $password_reset_repository,
-    public function __construct(MUserRepositoryInterface $m_user_repository)
+    public function __construct(PasswordResetRepositoryInterface $password_reset_repository, MUserRepositoryInterface $m_user_repository)
     {
-        // $this->password_reset_repository = $password_reset_repository;
+        $this->password_reset_repository = $password_reset_repository;
         $this->m_user_repository = $m_user_repository;
     }
 
@@ -51,12 +44,13 @@ class PasswordResetController extends Controller
      * @return void
      */
     public function store(PasswordResetRequest $request){
+        $msg = "";
         try {
             // パスワードリセット処理実行
             $this->password_reset_repository->exec($request);
         } catch (\Exception $e) {
-            return response()->error([AppConstants::KEY_MSG => self::ERR_MSG, AppConstants::KEY_LOG => $e->getMessage()]);
+            return response()->error([AppConstants::KEY_MSG => AppConstants::ERR_MSG, AppConstants::KEY_LOG => $e->getMessage()]);
         }
-        return response()->success([AppConstants::KEY_MSG => self::INFO_MSG]);
+        return response()->success([AppConstants::KEY_MSG => $msg]);
     }
 }

@@ -6,5 +6,6 @@ use App\Requests\Users\PasswordResetRequest;
 
 interface PasswordResetRepositoryInterface
 {
-    public function exec(PasswordResetRequest $request);
+    public function validate(PasswordResetRequest $request, &$msg);
+    public function exec(PasswordResetRequest $request, &$msg);
 }

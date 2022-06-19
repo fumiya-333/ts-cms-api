@@ -28,6 +28,22 @@ class CreatePreRepository implements CreatePreRepositoryInterface
     }
 
     /**
+     * バリデーション処理
+     *
+     * @param  mixed $request リクエストパラメータ
+     * @param  mixed $msg エラーメッセージ
+     * @return バリデーション判定フラグ
+     */
+    public function validate(CreatePreRequest $request, &$msg){
+        $m_user = $this->m_user_repository->emailFindUser($request->email);
+        // 仮登録メール判定
+        if(!$this->m_user_repository->isPasswordResetPred($m_user, $msg)){
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * 仮登録処理実行
      *
      * @param  mixed $request

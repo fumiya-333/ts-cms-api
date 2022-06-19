@@ -5,6 +5,8 @@ namespace App\Repositories\Models;
 use App\Interfaces\Models\MUserRepositoryInterface;
 use App\Models\MUser;
 use Carbon\Carbon;
+use App\Libs\DateUtil;
+use App\Libs\AppConstants;
 
 class MUserRepository implements MUserRepositoryInterface
 {
@@ -50,6 +52,76 @@ class MUserRepository implements MUserRepositoryInterface
      */
     public function emailVerifyTokenFindUser($email_verify_token){
         return MUser::emailVerifyTokenFindUser($email_verify_token);
+    }
+
+    /**
+     * 仮登録判定
+     *
+     * @param  mixed $m_user ユーザー情報
+     * @param  mixed $msg エラーメッセージ
+     * @return 仮登録判定フラグ
+     */
+    public function isCreatedPre($m_user, &$msg) {
+        // 既にデータ作成されているか判定
+        if($m_user->count()){
+            // 仮登録済か判定
+            if(!$m_user->email_verified){
+                $msg = AppConstants::ERR_MSG_EMAIL_VERIFIED_OFF;
+                return false;
+            }else{
+                $msg = AppConstants::ERR_MSG_EMAIL_VERIFIED_ON;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 本登録判定
+     *
+     * @param  mixed $m_user ユーザー情報
+     * @param  mixed $msg エラーメッセージ
+     * @return 本登録判定フラグ
+     */
+    public function isCreated($m_user, &$msg) {
+        // 登録されているトークンか判定
+        if(!$m_user->count()){
+            $msg .= AppConstants::ERR_MSG_EMAIL_VERIFY_TOKEN_VALID;
+            return false;
+        }
+        // 本登録されているか判定
+        if($m_user->email_verified){
+            $msg .= AppConstants::ERR_MSG_USER_REGIST_COMPLETED;
+            return false;
+        }
+        // メール認証の発行から、1日以上経過しているか
+        if(DateUtil::isAddDay($m_user->email_verified_at)){
+            $msg .= AppConstants::ERR_MSG_EMAIL_AUTH_24HOURS_PASSED;
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * パスワードリセット仮登録判定
+     *
+     * @param  mixed $m_user ユーザー情報
+     * @param  mixed $msg エラーメッセージ
+     * @return パスワードリセット仮登録判定フラグ
+     */
+    public function isPasswordResetPred($m_user, &$msg) {
+        // メールアドレスが登録されているか判定
+        if(!$m_user->count()){
+            $msg .= AppConstants::ERR_MSG_NOT_EXISTS;
+            return false;
+        }
+
+        // 本登録されているか判定
+        if(!$m_user->email_password_reset_verified){
+            $msg .= AppConstants::ERR_MSG_EMAIL_VERIFIED_OFF;
+            return false;
+        }
+        return true;
     }
 
     /**

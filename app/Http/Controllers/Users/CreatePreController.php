@@ -28,9 +28,15 @@ class CreatePreController extends Controller
      * @return void
      */
     public function store(CreatePreRequest $request){
+        $msg = "";
         try {
-            // 仮登録処理実行
-            $this->create_pre_repository->exec($request);
+            // バリデーション処理
+            if($this->create_pre_repository->validate($request, $msg)){
+                // 仮登録処理実行
+                $this->create_pre_repository->exec($request);
+            }else{
+                return response()->error([AppConstants::KEY_MSG => $msg]);
+            }
         } catch (\Exception $e) {
             return response()->error([AppConstants::KEY_MSG => self::ERR_MSG, AppConstants::KEY_LOG => $e->getMessage()]);
         }
