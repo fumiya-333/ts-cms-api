@@ -69,6 +69,4 @@ class AppConstants {
     const ERR_MSG_EMAIL_VERIFIED_ON = "このメールアドレスは既に本登録されています。他のメールアドレスを入力して下さい。";
     /** 未登録のメールアドレス */
     const ERR_MSG_NOT_EXISTS = "未登録のメールアドレスです。";
-    /** 未登録のメールアドレス */
-    const ERR_MSG_EMAIL_VERIFIED_OFF = "仮登録済のメールアドレスです。メールにて本登録を完了させて下さい。";
 }
