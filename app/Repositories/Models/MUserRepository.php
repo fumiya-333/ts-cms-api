@@ -22,7 +22,7 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $email_verified_at メール認証発行日
      * @return void
      */
-    public function createPre(
+    public function store(
         string $user_id,
         $name,
         $email,
@@ -40,6 +40,24 @@ class MUserRepository implements MUserRepositoryInterface
             MUser::COL_EMAIL_VERIFY_TOKEN => $email_verify_token,
             MUser::COL_EMAIL_VERIFIED_AT => $email_verified_at,
         ]);
+    }
+
+    /**
+     * ユーザー情報仮更新
+     *
+     * @param  mixed $m_user ユーザー情報
+     * @param  mixed $name 氏名
+     * @param  mixed $email_verified メール認証フラグ
+     * @param  mixed $email_verify_token メールアドレスURLトークン
+     * @param  mixed $email_verified_at メール認証発行日
+     * @return ユーザー情報
+     */
+    public function update($m_user, $name, $email_verified, $email_verify_token, $email_verified_at) {
+        $m_user->name = $name;
+        $m_user->email_verified = $email_verified;
+        $m_user->email_verify_token = $email_verify_token;
+        $m_user->email_verified_at = $email_verified_at;
+        return $m_user->save();
     }
 
     /**
@@ -65,29 +83,6 @@ class MUserRepository implements MUserRepositoryInterface
     }
 
     /**
-     * 仮登録判定
-     *
-     * @param  mixed $m_user ユーザー情報
-     * @param  mixed $msg エラーメッセージ
-     * @return 仮登録判定フラグ
-     */
-    public function isCreatedPre($m_user, &$msg)
-    {
-        // 既にデータ作成されているか判定
-        if ($m_user->count()) {
-            // 仮登録済か判定
-            if (!$m_user->email_verified) {
-                $msg = AppConstants::ERR_MSG_EMAIL_VERIFIED_OFF;
-                return false;
-            } else {
-                $msg = AppConstants::ERR_MSG_EMAIL_VERIFIED_ON;
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * 本登録判定
      *
      * @param  mixed $m_user ユーザー情報
@@ -106,7 +101,7 @@ class MUserRepository implements MUserRepositoryInterface
             $msg .= AppConstants::ERR_MSG_USER_REGIST_COMPLETED;
             return false;
         }
-        // メール認証の発行から、1日以上経過しているか
+        // メール認証の発行から、1日以上経過している場合
         if (DateUtil::isAddDay($m_user->email_verified_at)) {
             $msg .= AppConstants::ERR_MSG_EMAIL_AUTH_24HOURS_PASSED;
             return false;
@@ -121,19 +116,19 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $msg エラーメッセージ
      * @return パスワードリセット仮登録判定フラグ
      */
-    public function isPasswordResetPred($m_user, &$msg)
+    public function isPasswordReseted($m_user, &$msg)
     {
         // メールアドレスが登録されているか判定
-        if (!$m_user->count()) {
-            $msg .= AppConstants::ERR_MSG_NOT_EXISTS;
-            return false;
-        }
+        // if (!$m_user->count()) {
+        //     $msg .= AppConstants::ERR_MSG_NOT_EXISTS;
+        //     return false;
+        // }
 
-        // 本登録されているか判定
-        if (!$m_user->email_password_reset_verified) {
-            $msg .= AppConstants::ERR_MSG_EMAIL_VERIFIED_OFF;
-            return false;
-        }
+        // // 本登録されているか判定
+        // if (!$m_user->email_password_reset_verified) {
+        //     $msg .= AppConstants::ERR_MSG_EMAIL_VERIFIED_OFF;
+        //     return false;
+        // }
         return true;
     }
 

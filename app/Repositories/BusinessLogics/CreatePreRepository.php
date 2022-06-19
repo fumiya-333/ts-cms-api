@@ -16,6 +16,9 @@ use Carbon\Carbon;
 
 class CreatePreRepository implements CreatePreRepositoryInterface
 {
+    /** 完了メッセージ */
+    const INFO_MSG = '本登録を行う為のURLをメールにてお送りしました。24時間以内にメールをご覧いただき、本登録を行ってください。';
+
     private MUserRepositoryInterface $m_user_repository;
     private SendMailRepositoryInterface $send_mail_repository;
     private TSendMailRepositoryInterface $t_send_mail_repository;
@@ -31,33 +34,54 @@ class CreatePreRepository implements CreatePreRepositoryInterface
     }
 
     /**
+     * 仮登録処理実行
+     *
+     * @param  mixed $request リクエストパラメータ
+     * @param  mixed $msg エラーメッセージ
+     * @return void
+     */
+    public function exec(CreatePreRequest $request, &$msg) {
+        $m_user = new MUser();
+        // バリデーション処理
+        if (self::validate($request, $msg, $m_user)) {
+            // 仮登録処理実行
+            self::store($request, $msg);
+        } else {
+            // 仮更新処理実行
+            self::update($request, $msg, $m_user);
+        }
+    }
+
+    /**
      * バリデーション処理
      *
      * @param  mixed $request リクエストパラメータ
      * @param  mixed $msg エラーメッセージ
      * @return バリデーション判定フラグ
      */
-    public function validate(CreatePreRequest $request, &$msg)
+    public function validate(CreatePreRequest $request, &$msg, &$m_user)
     {
         $m_user = $this->m_user_repository->emailFindUser($request->email);
-        // 仮登録メール判定
-        if (!$this->m_user_repository->isPasswordResetPred($m_user, $msg)) {
+        // 既にデータ作成されているか判定
+        if ($m_user->count()) {
             return false;
         }
+        $msg = self::INFO_MSG;
         return true;
     }
 
     /**
      * 仮登録処理実行
      *
-     * @param  mixed $request
+     * @param  mixed $request リクエストパラメータ
+     * @param  mixed $msg エラーメッセージ
      * @return void
      */
-    public function exec(CreatePreRequest $request)
+    public function store(CreatePreRequest $request, &$msg)
     {
         DB::transaction(function () use ($request) {
             // ユーザー情報登録
-            $m_user = $this->m_user_repository->createPre(
+            $m_user = $this->m_user_repository->store(
                 StrUtil::getUuid(),
                 $request->name,
                 $request->email,
@@ -67,25 +91,57 @@ class CreatePreRepository implements CreatePreRepositoryInterface
                 new Carbon()
             );
 
-            $variables = [
-                MUser::COL_EMAIL => $m_user->email,
-                MUser::COL_EMAIL_VERIFY_TOKEN => $m_user->email_verify_token,
-            ];
-            // メール送信処理実行
-            $email = $this->send_mail_repository->exec(
-                $m_user->email,
-                TSendMail::CREATE_PRE_EMAIL_SUBJECT,
-                $variables,
-                'emails.createPre'
-            );
-
-            // メール送信情報登録
-            $this->t_send_mail_repository->create(
-                StrUtil::getUuid(),
-                $m_user->email,
-                TSendMail::CREATE_PRE_EMAIL_SUBJECT,
-                $email->getMessage()
-            );
+            // メール送信・情報登録
+            self::sendWithStoreMail($m_user);
         });
+    }
+
+    /**
+     * 仮更新処理実行
+     *
+     * @param  mixed $request リクエストパラメータ
+     * @param  mixed $msg エラーメッセージ
+     * @param  mixed $m_user ユーザー情報
+     * @return void
+     */
+    public function update(CreatePreRequest $request, &$msg, $m_user){
+
+        $m_user = $this->m_user_repository->update(
+            $m_user,
+            $request->name,
+            MUser::EMAIL_VERIFIED_OFF,
+            StrUtil::getUuid(),
+            new Carbon()
+        );
+        // メール送信・情報登録
+        self::sendWithStoreMail($m_user);
+    }
+
+    /**
+     * メール送信・情報登録
+     *
+     * @param  mixed $m_user ユーザー情報
+     * @return void
+     */
+    public function sendWithStoreMail($m_user) {
+        $variables = [
+            MUser::COL_EMAIL => $m_user->email,
+            MUser::COL_EMAIL_VERIFY_TOKEN => $m_user->email_verify_token,
+        ];
+        // メール送信処理実行
+        $email = $this->send_mail_repository->exec(
+            $m_user->email,
+            TSendMail::CREATE_PRE_EMAIL_SUBJECT,
+            $variables,
+            'emails.createPre'
+        );
+
+        // メール送信情報登録
+        $this->t_send_mail_repository->create(
+            StrUtil::getUuid(),
+            $m_user->email,
+            TSendMail::CREATE_PRE_EMAIL_SUBJECT,
+            $email->getMessage()
+        );
     }
 }
