@@ -34,7 +34,8 @@ class PasswordResetPreRepository implements PasswordResetPreRepositoryInterface
         $this->t_send_mail_repository = $t_send_mail_repository;
     }
 
-    public function exec(PasswordResetPreRequest $request, &$msg) {
+    public function exec(PasswordResetPreRequest $request, &$msg)
+    {
         $m_user = new MUser();
         // バリデーション処理
         if (self::validate($request, $msg, $m_user)) {
@@ -89,7 +90,8 @@ class PasswordResetPreRepository implements PasswordResetPreRepositoryInterface
      * @param  mixed $m_user ユーザー情報
      * @return void
      */
-    public function sendWithStoreMail($m_user) {
+    public function sendWithStoreMail($m_user)
+    {
         $variables = [
             MUser::COL_EMAIL => $m_user->email,
             MUser::COL_EMAIL_PASSWORD_RESET_TOKEN => $m_user->email_password_reset_token,

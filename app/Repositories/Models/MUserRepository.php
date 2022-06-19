@@ -52,7 +52,8 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $email_verified_at メール認証発行日
      * @return ユーザー情報
      */
-    public function update(&$m_user, $name, $email_verified, $email_verify_token, $email_verified_at) {
+    public function update(&$m_user, $name, $email_verified, $email_verify_token, $email_verified_at)
+    {
         $m_user->name = $name;
         $m_user->email_verified = $email_verified;
         $m_user->email_verify_token = $email_verify_token;

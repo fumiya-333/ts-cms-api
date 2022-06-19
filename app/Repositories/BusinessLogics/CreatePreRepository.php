@@ -40,7 +40,8 @@ class CreatePreRepository implements CreatePreRepositoryInterface
      * @param  mixed $msg エラーメッセージ
      * @return void
      */
-    public function exec(CreatePreRequest $request, &$msg) {
+    public function exec(CreatePreRequest $request, &$msg)
+    {
         $m_user = new MUser();
         // バリデーション処理
         if (self::validate($request, $m_user)) {
@@ -102,7 +103,8 @@ class CreatePreRepository implements CreatePreRepositoryInterface
      * @param  mixed $m_user ユーザー情報
      * @return void
      */
-    public function update(CreatePreRequest $request, $m_user){
+    public function update(CreatePreRequest $request, $m_user)
+    {
         $this->m_user_repository->update(
             $m_user,
             $request->name,
@@ -120,7 +122,8 @@ class CreatePreRepository implements CreatePreRepositoryInterface
      * @param  mixed $m_user ユーザー情報
      * @return void
      */
-    public function sendWithStoreMail($m_user) {
+    public function sendWithStoreMail($m_user)
+    {
         $variables = [
             MUser::COL_EMAIL => $m_user->email,
             MUser::COL_EMAIL_VERIFY_TOKEN => $m_user->email_verify_token,
