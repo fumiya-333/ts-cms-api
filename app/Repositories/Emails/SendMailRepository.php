@@ -17,7 +17,8 @@ class SendMailRepository implements SendMailRepositoryInterface
      * @param  mixed $text_file_path 本文ファイルパス
      * @return void
      */
-    public function exec($email, $subject, $variables, $text_file_path){
+    public function exec($email, $subject, $variables, $text_file_path)
+    {
         $email_verification = new EmailVerification($subject, $variables, $text_file_path);
         Mail::to($email)->send($email_verification);
         return $email_verification;

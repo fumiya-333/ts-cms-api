@@ -9,7 +9,7 @@ use Auth;
 
 class LoginController extends Controller
 {
-     /** エラーメッセージ */
+    /** エラーメッセージ */
     const ERR_MSG = 'ログインに失敗しました。メールアドレスもしくはパスワードが異なります。';
 
     /**
@@ -18,11 +18,19 @@ class LoginController extends Controller
      * @param  LoginRequest $request リクエストパラメータ
      * @return view
      */
-    public function login(LoginRequest $request){
-        if(Auth::attempt([MUser::COL_EMAIL => $request->email, MUser::COL_PASSWORD => $request->password])){
+    public function login(LoginRequest $request)
+    {
+        if (
+            Auth::attempt([
+                MUser::COL_EMAIL => $request->email,
+                MUser::COL_PASSWORD => $request->password,
+            ])
+        ) {
             $token = $request->user()->createToken(AppConstants::KEY_TOKEN_NAME);
-            return response()->success([AppConstants::KEY_API_TOKEN => $token->plainTextToken]);
-        }else{
+            return response()->success([
+                AppConstants::KEY_API_TOKEN => $token->plainTextToken,
+            ]);
+        } else {
             return response()->error([AppConstants::KEY_MSG => self::ERR_MSG]);
         }
     }

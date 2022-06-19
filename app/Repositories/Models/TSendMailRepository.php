@@ -16,12 +16,13 @@ class TSendMailRepository implements TSendMailRepositoryInterface
      * @param  mixed $message 本文
      * @return void
      */
-    public function create(string $send_mail_id, $email, $subject, $message){
+    public function create(string $send_mail_id, $email, $subject, $message)
+    {
         return TSendMail::create([
             TSendMail::COL_SEND_MAIL_ID => $send_mail_id,
             TSendMail::COL_EMAIL => $email,
             TSendMail::COL_SUBJECT => $subject,
-            TSendMail::COL_MESSAGE => $message
+            TSendMail::COL_MESSAGE => $message,
         ]);
     }
 }

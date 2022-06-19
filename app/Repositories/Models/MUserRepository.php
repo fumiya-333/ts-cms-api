@@ -22,7 +22,15 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $email_verified_at メール認証発行日
      * @return void
      */
-    public function createPre(string $user_id, $name, $email, $password, $email_verified, $email_verify_token, $email_verified_at) {
+    public function createPre(
+        string $user_id,
+        $name,
+        $email,
+        $password,
+        $email_verified,
+        $email_verify_token,
+        $email_verified_at
+    ) {
         return MUser::create([
             MUser::COL_USER_ID => $user_id,
             MUser::COL_NAME => $name,
@@ -40,7 +48,8 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $email メールアドレス
      * @return ユーザー情報
      */
-    public function emailFindUser($email){
+    public function emailFindUser($email)
+    {
         return MUser::emailFindUser($email);
     }
 
@@ -50,7 +59,8 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $email_verify_token メールアドレスURLトークン
      * @return ユーザー情報
      */
-    public function emailVerifyTokenFindUser($email_verify_token){
+    public function emailVerifyTokenFindUser($email_verify_token)
+    {
         return MUser::emailVerifyTokenFindUser($email_verify_token);
     }
 
@@ -61,14 +71,15 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $msg エラーメッセージ
      * @return 仮登録判定フラグ
      */
-    public function isCreatedPre($m_user, &$msg) {
+    public function isCreatedPre($m_user, &$msg)
+    {
         // 既にデータ作成されているか判定
-        if($m_user->count()){
+        if ($m_user->count()) {
             // 仮登録済か判定
-            if(!$m_user->email_verified){
+            if (!$m_user->email_verified) {
                 $msg = AppConstants::ERR_MSG_EMAIL_VERIFIED_OFF;
                 return false;
-            }else{
+            } else {
                 $msg = AppConstants::ERR_MSG_EMAIL_VERIFIED_ON;
                 return false;
             }
@@ -83,19 +94,20 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $msg エラーメッセージ
      * @return 本登録判定フラグ
      */
-    public function isCreated($m_user, &$msg) {
+    public function isCreated($m_user, &$msg)
+    {
         // 登録されているトークンか判定
-        if(!$m_user->count()){
+        if (!$m_user->count()) {
             $msg .= AppConstants::ERR_MSG_EMAIL_VERIFY_TOKEN_VALID;
             return false;
         }
         // 本登録されているか判定
-        if($m_user->email_verified){
+        if ($m_user->email_verified) {
             $msg .= AppConstants::ERR_MSG_USER_REGIST_COMPLETED;
             return false;
         }
         // メール認証の発行から、1日以上経過しているか
-        if(DateUtil::isAddDay($m_user->email_verified_at)){
+        if (DateUtil::isAddDay($m_user->email_verified_at)) {
             $msg .= AppConstants::ERR_MSG_EMAIL_AUTH_24HOURS_PASSED;
             return false;
         }
@@ -109,15 +121,16 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $msg エラーメッセージ
      * @return パスワードリセット仮登録判定フラグ
      */
-    public function isPasswordResetPred($m_user, &$msg) {
+    public function isPasswordResetPred($m_user, &$msg)
+    {
         // メールアドレスが登録されているか判定
-        if(!$m_user->count()){
+        if (!$m_user->count()) {
             $msg .= AppConstants::ERR_MSG_NOT_EXISTS;
             return false;
         }
 
         // 本登録されているか判定
-        if(!$m_user->email_password_reset_verified){
+        if (!$m_user->email_password_reset_verified) {
             $msg .= AppConstants::ERR_MSG_EMAIL_VERIFIED_OFF;
             return false;
         }
@@ -130,7 +143,8 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $email_password_reset_token パスワードリセットメールアドレスURLトークン
      * @return ユーザー情報
      */
-    public function emailPasswordResetTokenFindUser($email_password_reset_token){
+    public function emailPasswordResetTokenFindUser($email_password_reset_token)
+    {
         return MUser::emailPasswordResetTokenFindUser($email_password_reset_token);
     }
 
@@ -141,7 +155,8 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $request リクエストパラメータ
      * @return void
      */
-    public function updateEmailVerifiedPassword($m_user, $request){
+    public function updateEmailVerifiedPassword($m_user, $request)
+    {
         $m_user->password = bcrypt($request->password);
         $m_user->email_verified = MUser::EMAIL_VERIFIED_ON;
         return $m_user->save();
@@ -154,7 +169,8 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $email_password_reset_token パスワードリセットメールアドレスURLトークン
      * @return void
      */
-    public function updatePasswordResetToken($m_user, $email_password_reset_token){
+    public function updatePasswordResetToken($m_user, $email_password_reset_token)
+    {
         $m_user->email_password_reset_verified = MUser::EMAIL_PASSWORD_RESET_VERIFIED_OFF;
         $m_user->email_password_reset_token = $email_password_reset_token;
         $m_user->email_password_reset_at = new Carbon();
@@ -168,7 +184,8 @@ class MUserRepository implements MUserRepositoryInterface
      * @param  mixed $password パスワード
      * @return void
      */
-    public function updatePasswordReset($m_user, $password){
+    public function updatePasswordReset($m_user, $password)
+    {
         $m_user->password = bcrypt($password);
         $m_user->email_password_reset_verified = MUser::EMAIL_PASSWORD_RESET_VERIFIED_ON;
         return $m_user->save();

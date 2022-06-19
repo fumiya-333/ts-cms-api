@@ -13,11 +13,11 @@ class BaseRequest extends FormRequest
     /* エラーメッセージ
     **********************************************/
     /** 未入力 */
-    const ERR_MSG_REQUIRED = "を入力して下さい。";
+    const ERR_MSG_REQUIRED = 'を入力して下さい。';
     /** パスワードとパスワード（確認用不一致） */
-    const ERR_MSG_PASSWORD_CONFIRMD = "とパスワード（確認用）の入力が異なります。";
+    const ERR_MSG_PASSWORD_CONFIRMD = 'とパスワード（確認用）の入力が異なります。';
     /** 未登録 */
-    const ERR_MSG_NOT_REGIST = "は登録されていません。";
+    const ERR_MSG_NOT_REGIST = 'は登録されていません。';
 
     /**********************************************
     /* バリデーションルールキー
@@ -38,7 +38,8 @@ class BaseRequest extends FormRequest
 
     protected $req_attributes = [];
 
-    protected function failedValidation(Validator $validator) {
+    protected function failedValidation(Validator $validator)
+    {
         $response = implode('\n', $validator->errors()->all());
         throw new HttpResponseException(response()->error([AppConstants::KEY_MSG => $response]));
     }

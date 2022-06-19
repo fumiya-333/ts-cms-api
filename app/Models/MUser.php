@@ -33,7 +33,19 @@ class MUser extends Authenticatable
     /** ログイン保持用トークン */
     const COL_REMENBER_TOKEN = 'remember_token';
 
-    protected $fillable = [self::COL_USER_ID, self::COL_NAME, self::COL_EMAIL, self::COL_EMAIL_VERIFIED, self::COL_EMAIL_VERIFY_TOKEN, self::COL_EMAIL_VERIFIED_AT, self::COL_PASSWORD, self::COL_REMENBER_TOKEN, self::COL_EMAIL_PASSWORD_RESET_VERIFIED, self::COL_EMAIL_PASSWORD_RESET_TOKEN, self::COL_EMAIL_PASSWORD_RESET_AT];
+    protected $fillable = [
+        self::COL_USER_ID,
+        self::COL_NAME,
+        self::COL_EMAIL,
+        self::COL_EMAIL_VERIFIED,
+        self::COL_EMAIL_VERIFY_TOKEN,
+        self::COL_EMAIL_VERIFIED_AT,
+        self::COL_PASSWORD,
+        self::COL_REMENBER_TOKEN,
+        self::COL_EMAIL_PASSWORD_RESET_VERIFIED,
+        self::COL_EMAIL_PASSWORD_RESET_TOKEN,
+        self::COL_EMAIL_PASSWORD_RESET_AT,
+    ];
 
     /** 氏名（日本語） */
     const COL_JP_NAME = '氏名';
@@ -55,7 +67,6 @@ class MUser extends Authenticatable
     /** プライマリーキー */
     protected $primaryKey = self::COL_USER_ID;
 
-
     /**
      * メールアドレスに紐づくユーザー情報取得
      *
@@ -63,7 +74,8 @@ class MUser extends Authenticatable
      * @param  mixed $email メールアドレス
      * @return ユーザー情報
      */
-    public function scopeEmailFindUser($query, $email){
+    public function scopeEmailFindUser($query, $email)
+    {
         return $query->where(self::COL_EMAIL, $email)->first();
     }
 
@@ -74,7 +86,8 @@ class MUser extends Authenticatable
      * @param  mixed $email_verify_token メールアドレスURLトークン
      * @return ユーザー情報
      */
-    public function scopeEmailVerifyTokenFindUser($query, $email_verify_token){
+    public function scopeEmailVerifyTokenFindUser($query, $email_verify_token)
+    {
         return $query->where(self::COL_EMAIL_VERIFY_TOKEN, $email_verify_token)->first();
     }
 
@@ -85,7 +98,8 @@ class MUser extends Authenticatable
      * @param  mixed $email_password_reset_token パスワードリセットメールアドレスURLトークン
      * @return ユーザー情報
      */
-    public function scopeEmailPasswordResetTokenFindUser($query, $email_password_reset_token){
+    public function scopeEmailPasswordResetTokenFindUser($query, $email_password_reset_token)
+    {
         return $query->where(self::COL_EMAIL_PASSWORD_RESET_TOKEN, $email_password_reset_token)->first();
     }
 }

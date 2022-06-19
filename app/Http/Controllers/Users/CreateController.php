@@ -16,8 +16,10 @@ class CreateController extends Controller
     private CreateRepositoryInterface $create_repository;
     private MUserRepositoryInterface $m_user_repository;
 
-    public function __construct(CreateRepositoryInterface $create_repository, MUserRepositoryInterface $m_user_repository)
-    {
+    public function __construct(
+        CreateRepositoryInterface $create_repository,
+        MUserRepositoryInterface $m_user_repository
+    ) {
         $this->create_repository = $create_repository;
         $this->m_user_repository = $m_user_repository;
     }
@@ -28,12 +30,19 @@ class CreateController extends Controller
      * @param  mixed $request リクエストパラメータ
      * @return void
      */
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $users = $this->m_user_repository->emailVerifyTokenFindUser($request->email_verify_token);
-        if($users->exists()){
-            return response()->success([MUser::COL_NAME => $users->name, MUser::COL_EMAIL => $users->email, StrUtil::convToCamel(MUser::COL_EMAIL_VERIFIED) => $users->email_verified]);
-        }else{
-            return response()->error([AppConstants::KEY_MSG => AppConstants::ERR_MSG]);
+        if ($users->exists()) {
+            return response()->success([
+                MUser::COL_NAME => $users->name,
+                MUser::COL_EMAIL => $users->email,
+                StrUtil::convToCamel(MUser::COL_EMAIL_VERIFIED) => $users->email_verified,
+            ]);
+        } else {
+            return response()->error([
+                AppConstants::KEY_MSG => AppConstants::ERR_MSG,
+            ]);
         }
     }
 
@@ -43,18 +52,22 @@ class CreateController extends Controller
      * @param  mixed $request リクエストパラメータ
      * @return void
      */
-    public function store(CreateRequest $request){
-        $msg = "";
+    public function store(CreateRequest $request)
+    {
+        $msg = '';
         try {
             // バリデーション処理
-            if($this->create_repository->validate($request, $msg)){
+            if ($this->create_repository->validate($request, $msg)) {
                 // 本登録処理実行
                 $this->create_repository->exec($request, $msg);
-            }else{
+            } else {
                 return response()->error([AppConstants::KEY_MSG => $msg]);
             }
         } catch (\Exception $e) {
-            return response()->error([AppConstants::KEY_MSG => AppConstants::ERR_MSG, AppConstants::KEY_LOG => $e->getMessage()]);
+            return response()->error([
+                AppConstants::KEY_MSG => AppConstants::ERR_MSG,
+                AppConstants::KEY_LOG => $e->getMessage(),
+            ]);
         }
         return response()->success([AppConstants::KEY_MSG => $msg]);
     }

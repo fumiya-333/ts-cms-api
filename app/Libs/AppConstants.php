@@ -1,8 +1,8 @@
 <?php
 namespace App\Libs;
 
-class AppConstants {
-
+class AppConstants
+{
     /********************************************
     /* 画面表示
     /********************************************
@@ -45,18 +45,18 @@ class AppConstants {
     /** パスワードリセット（仮） */
     const ROOT_DIR_PASSWORD_RESET_PRE = self::ROOT_DIR_PASSWORD_RESET . 'Pre';
     /** ログイン */
-    const ROOT_DIR_USERS_LOGIN = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_LOGIN;
+    const ROOT_DIR_USERS_LOGIN = self::ROOT_DIR_USERS . '/' . self::ROOT_DIR_LOGIN;
     /** パスワードリセット（仮登録） */
-    const ROOT_DIR_USERS_PASSWORD_RESET_PRE = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_PASSWORD_RESET_PRE;
+    const ROOT_DIR_USERS_PASSWORD_RESET_PRE = self::ROOT_DIR_USERS . '/' . self::ROOT_DIR_PASSWORD_RESET_PRE;
     /** パスワードリセット */
-    const ROOT_DIR_USERS_PASSWORD_RESET = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_PASSWORD_RESET;
+    const ROOT_DIR_USERS_PASSWORD_RESET = self::ROOT_DIR_USERS . '/' . self::ROOT_DIR_PASSWORD_RESET;
     /** ユーザー新規作成（仮登録） */
-    const ROOT_DIR_USERS_CREATE_PRE = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_CREATE_PRE;
+    const ROOT_DIR_USERS_CREATE_PRE = self::ROOT_DIR_USERS . '/' . self::ROOT_DIR_CREATE_PRE;
     /** ユーザー新規作成 */
-    const ROOT_DIR_USERS_CREATE = self::ROOT_DIR_USERS . '/'. self::ROOT_DIR_CREATE;
+    const ROOT_DIR_USERS_CREATE = self::ROOT_DIR_USERS . '/' . self::ROOT_DIR_CREATE;
 
     /** エラーメッセージ */
-    const ERR_MSG = "エラーが発生しました。";
+    const ERR_MSG = 'エラーが発生しました。';
     /** 無効なトークン */
     const ERR_MSG_EMAIL_VERIFY_TOKEN_VALID = '無効なトークンです。URLが途切れていないかご確認下さい。';
     /** 本登録済み */
@@ -64,9 +64,9 @@ class AppConstants {
     /** メール認証発効後24時間以上経過 */
     const ERR_MSG_EMAIL_AUTH_24HOURS_PASSED = 'メール認証の発行から24時間以上経過しています。再度アカウント設定を行って下さい。';
     /** 仮登録済みのメールアドレス */
-    const ERR_MSG_EMAIL_VERIFIED_OFF = "仮登録済のメールアドレスです。メールにて本登録を完了させて下さい。";
+    const ERR_MSG_EMAIL_VERIFIED_OFF = '仮登録済のメールアドレスです。メールにて本登録を完了させて下さい。';
     /** 本登録済みのメールアドレス */
-    const ERR_MSG_EMAIL_VERIFIED_ON = "このメールアドレスは既に本登録されています。他のメールアドレスを入力して下さい。";
+    const ERR_MSG_EMAIL_VERIFIED_ON = 'このメールアドレスは既に本登録されています。他のメールアドレスを入力して下さい。';
     /** 未登録のメールアドレス */
-    const ERR_MSG_NOT_EXISTS = "未登録のメールアドレスです。";
+    const ERR_MSG_NOT_EXISTS = '未登録のメールアドレスです。';
 }

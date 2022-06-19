@@ -29,10 +29,11 @@ class CreateRepository implements CreateRepositoryInterface
      * @param  mixed $msg エラーメッセージ
      * @return バリデーション判定フラグ
      */
-    public function validate(CreateRequest $request, &$msg){
+    public function validate(CreateRequest $request, &$msg)
+    {
         $m_user = $this->m_user_repository->emailFindUser($request->email);
         // 本登録メール判定
-        if(!$this->m_user_repository->isCreated($m_user, $msg)){
+        if (!$this->m_user_repository->isCreated($m_user, $msg)) {
             return false;
         }
         return true;
@@ -45,20 +46,18 @@ class CreateRepository implements CreateRepositoryInterface
      * @param  mixed $msg メッセージ
      * @return void
      */
-    public function exec(CreateRequest $request, &$msg) {
-
+    public function exec(CreateRequest $request, &$msg)
+    {
         DB::transaction(function () use ($request, &$msg) {
-
             // メールアドレスに紐づくユーザー情報取得
             $m_user = $this->m_user_repository->emailFindUser($request->email);
 
             // 本登録処理
-            if($this->m_user_repository->updateEmailVerifiedPassword($m_user, $request)){
+            if ($this->m_user_repository->updateEmailVerifiedPassword($m_user, $request)) {
                 $msg .= self::INFO_MSG_USER_REGIST_SUCCESS;
-            }else{
+            } else {
                 $msg .= self::ERR_MSG_USER_REGIST_FAILED;
             }
-
         });
     }
 }

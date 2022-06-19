@@ -22,7 +22,8 @@ class EmailVerification extends Mailable
      *
      * @return void
      */
-    public function __construct($subject, $variables, $text_file_path){
+    public function __construct($subject, $variables, $text_file_path)
+    {
         $this->_subject = $subject;
         $this->variables = $variables;
         $this->text_file_path = $text_file_path;
@@ -33,9 +34,9 @@ class EmailVerification extends Mailable
      *
      * @return $this
      */
-    public function build(){
-        return $this
-            ->subject($this->_subject)
+    public function build()
+    {
+        return $this->subject($this->_subject)
             ->text($this->text_file_path)
             ->with($this->variables);
     }
@@ -45,7 +46,8 @@ class EmailVerification extends Mailable
      *
      * @return メール本文
      */
-    public function getMessage(){
+    public function getMessage()
+    {
         return $this->view($this->text_file_path)->render();
     }
 }

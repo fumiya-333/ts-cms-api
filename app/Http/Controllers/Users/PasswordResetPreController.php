@@ -21,17 +21,21 @@ class PasswordResetPreController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function store(PasswordResetPreRequest $request){
+    public function store(PasswordResetPreRequest $request)
+    {
         try {
             // バリデーション処理
-            if($this->password_reset_pre_repository->validate($request, $msg)){
+            if ($this->password_reset_pre_repository->validate($request, $msg)) {
                 // パスワードリセット処理実行
                 $this->password_reset_pre_repository->exec($request, $msg);
-            }else{
+            } else {
                 return response()->error([AppConstants::KEY_MSG => $msg]);
             }
         } catch (\Exception $e) {
-            return response()->error([AppConstants::KEY_MSG => AppConstants::ERR_MSG, AppConstants::KEY_LOG => $e->getMessage()]);
+            return response()->error([
+                AppConstants::KEY_MSG => AppConstants::ERR_MSG,
+                AppConstants::KEY_LOG => $e->getMessage(),
+            ]);
         }
         return response()->success([AppConstants::KEY_MSG => $msg]);
     }

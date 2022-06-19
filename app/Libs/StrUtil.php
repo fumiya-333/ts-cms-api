@@ -4,15 +4,15 @@ namespace App\Libs;
 use Str;
 use App\Libs\AppConstants;
 
-class StrUtil {
-
-
+class StrUtil
+{
     /**
      * UUIDを取得
      *
      * @return uuid
      */
-    public static function getUuid(){
+    public static function getUuid()
+    {
         return (string) Str::uuid();
     }
 
@@ -21,7 +21,8 @@ class StrUtil {
      *
      * @return ハッシュ値
      */
-    public static function getHash(){
+    public static function getHash()
+    {
         return hash(AppConstants::HASH_KEY_SHA256, uniqid(rand(), true));
     }
 
@@ -31,7 +32,8 @@ class StrUtil {
      * @param  mixed $str 文字列
      * @return ハッシュ値
      */
-    public static function convToHash($str){
+    public static function convToHash($str)
+    {
         return hash(AppConstants::HASH_KEY_SHA256, uniqid($str, true));
     }
 
@@ -41,7 +43,8 @@ class StrUtil {
      * @param  mixed $str 文字列
      * @return キャメルケース変換後文字列
      */
-    public static function convToCamel($str) {
+    public static function convToCamel($str)
+    {
         return Str::camel($str);
     }
 
@@ -51,7 +54,8 @@ class StrUtil {
      * @param  mixed $str 文字列
      * @return 文字列の長さ
      */
-    public static function length($str) {
+    public static function length($str)
+    {
         return Str::length($str);
     }
 }

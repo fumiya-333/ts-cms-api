@@ -10,7 +10,10 @@ use App\Http\Controllers\Users\PasswordResetPreController;
 use App\Http\Controllers\Users\PasswordResetController;
 
 Route::get(AppConstants::ROOT_DIR_USERS_CREATE . '/{email_verify_token}', [CreateController::class, 'index']);
-Route::get(AppConstants::ROOT_DIR_USERS_PASSWORD_RESET . '/{email_password_reset_token}', [PasswordResetController::class, 'index']);
+Route::get(AppConstants::ROOT_DIR_USERS_PASSWORD_RESET . '/{email_password_reset_token}', [
+    PasswordResetController::class,
+    'index',
+]);
 
 Route::post(AppConstants::ROOT_DIR_USERS_LOGIN, [LoginController::class, 'login']);
 Route::post(AppConstants::ROOT_DIR_USERS_CREATE_PRE, [CreatePreController::class, 'store']);
