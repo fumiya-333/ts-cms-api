@@ -53,6 +53,7 @@ class CreateRepository implements CreateRepositoryInterface
      *
      * @param  mixed $request リクエストパラメータ
      * @param  mixed $msg エラーメッセージ
+     * @param  mixed $m_user ユーザー情報
      * @return バリデーション判定フラグ
      */
     public function validate(CreateRequest $request, &$msg, &$m_user)

@@ -2,17 +2,25 @@
 
 namespace App\Repositories\BusinessLogics;
 
-use App\Requests\Users\CreateRequest;
+use Illuminate\Support\Facades\DB;
+use App\Requests\Users\PasswordResetRequest;
 use App\Interfaces\BusinessLogics\PasswordResetRepositoryInterface;
 use App\Interfaces\Models\MUserRepositoryInterface;
 use App\Models\MUser;
+use App\Libs\DateUtil;
 
 class PasswordResetRepository implements PasswordResetRepositoryInterface
 {
     /** ユーザー情報本登録完了 */
+    const INFO_MSG = '本登録が完了しました。';
+    /** ユーザー情報本登録完了 */
     const INFO_MSG_USER_REGIST_SUCCESS = 'パスワードリセットが完了しました。ログインを行いご利用下さい。';
-    /** ユーザー情報本登録失敗 */
-    const ERR_MSG_USER_REGIST_FAILED = 'パスワードリセットに失敗しました。管理者に連絡を行って下さい。';
+    /** 無効なトークン */
+    const ERR_MSG_EMAIL_VERIFY_TOKEN_VALID = '無効なトークンです。URLが途切れていないかご確認下さい。';
+    /** 本登録済み */
+    const ERR_MSG_USER_REGIST_COMPLETED = '既に本登録されています。ログインを行いご利用下さい。';
+    /** メール認証発効後24時間以上経過 */
+    const ERR_MSG_EMAIL_AUTH_24HOURS_PASSED = 'メール認証の発行から24時間以上経過しています。再度アカウント設定を行って下さい。';
 
     private MUserRepositoryInterface $m_user_repository;
 
@@ -30,16 +38,75 @@ class PasswordResetRepository implements PasswordResetRepositoryInterface
      */
     public function exec(PasswordResetRequest $request, &$msg)
     {
-        // メールアドレスURLトークンに紐づくユーザー情報取得
-        $m_user = $this->m_user_repository->emailVerifyTokenFindUser($request->email_verify_token);
-
-        // 本登録処理
-        if ($this->m_user_repository->updatePasswordReset($m_user, $request->password)) {
-            $msg .= self::INFO_MSG_USER_REGIST_SUCCESS;
-            return true;
+        $m_user = new MUser();
+        // バリデーション処理
+        if (self::validate($request, $msg, $m_user)) {
+            // 本登録処理
+            self::update($request, $msg, $m_user);
+        } else {
+            return false;
         }
+        $msg = self::INFO_MSG;
+        return true;
+    }
 
-        $msg .= self::ERR_MSG_USER_REGIST_FAILED;
-        return false;
+    /**
+     * バリデーション処理
+     *
+     * @param  mixed $request リクエストパラメータ
+     * @param  mixed $msg エラーメッセージ
+     * @param  mixed $m_user ユーザー情報
+     * @return バリデーション判定フラグ
+     */
+    public function validate(PasswordResetRequest $request, &$msg, &$m_user)
+    {
+        $m_user = $this->m_user_repository->emailFindUser($request->email);
+        // 本登録メール判定
+        return self::isPasswordReseted($m_user, $msg);
+    }
+
+    /**
+     * パスワード更新
+     *
+     * @param  mixed $request リクエストパラメータ
+     * @param  mixed $msg エラーメッセージ
+     * @param  mixed $m_user ユーザー情報
+     * @return void
+     */
+    public function update(PasswordResetRequest $request, $msg, $m_user)
+    {
+        DB::transaction(function () use ($request, $msg, $m_user) {
+            // 本登録処理
+            if ($this->m_user_repository->updatePasswordReset($m_user, $request->password)) {
+                $msg .= self::INFO_MSG_USER_REGIST_SUCCESS;
+            }
+        });
+    }
+
+    /**
+     * パスワードリセット更新判定
+     *
+     * @param  mixed $request リクエストパラメータ
+     * @param  mixed $msg エラーメッセージ
+     * @return void パスワードリセット更新判定フラグ
+     */
+    public function isPasswordReseted($m_user, &$msg)
+    {
+        // 登録されているトークンか判定
+        if (!$m_user->count()) {
+            $msg .= self::ERR_MSG_EMAIL_VERIFY_TOKEN_VALID;
+            return false;
+        }
+        // 本登録されているか判定
+        if ($m_user->email_password_reset_verified) {
+            $msg .= self::ERR_MSG_USER_REGIST_COMPLETED;
+            return false;
+        }
+        // メール認証の発行から、1日以上経過している場合
+        if (DateUtil::isAddDay($m_user->email_verified_at)) {
+            $msg .= self::ERR_MSG_EMAIL_AUTH_24HOURS_PASSED;
+            return false;
+        }
+        return true;
     }
 }

@@ -83,29 +83,6 @@ class MUserRepository implements MUserRepositoryInterface
     }
 
     /**
-     * パスワードリセット仮登録判定
-     *
-     * @param  mixed $m_user ユーザー情報
-     * @param  mixed $msg エラーメッセージ
-     * @return パスワードリセット仮登録判定フラグ
-     */
-    public function isPasswordReseted($m_user, &$msg)
-    {
-        // メールアドレスが登録されているか判定
-        // if (!$m_user->count()) {
-        //     $msg .= AppConstants::ERR_MSG_NOT_EXISTS;
-        //     return false;
-        // }
-
-        // // 本登録されているか判定
-        // if (!$m_user->email_password_reset_verified) {
-        //     $msg .= AppConstants::ERR_MSG_EMAIL_VERIFIED_OFF;
-        //     return false;
-        // }
-        return true;
-    }
-
-    /**
      * パスワードリセットメールアドレスURLトークンに紐づくユーザー情報取得
      *
      * @param  mixed $email_password_reset_token パスワードリセットメールアドレスURLトークン

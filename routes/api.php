@@ -19,3 +19,4 @@ Route::post(AppConstants::ROOT_DIR_USERS_LOGIN, [LoginController::class, 'login'
 Route::post(AppConstants::ROOT_DIR_USERS_CREATE_PRE, [CreatePreController::class, 'store']);
 Route::post(AppConstants::ROOT_DIR_USERS_CREATE, [CreateController::class, 'store']);
 Route::post(AppConstants::ROOT_DIR_USERS_PASSWORD_RESET_PRE, [PasswordResetPreController::class, 'store']);
+Route::post(AppConstants::ROOT_DIR_USERS_PASSWORD_RESET, [PasswordResetController::class, 'store']);

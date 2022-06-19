@@ -56,7 +56,7 @@ class PasswordResetController extends Controller
         $msg = '';
         try {
             // パスワードリセット処理実行
-            if (!$this->password_reset_repository->exec($request)) {
+            if (!$this->password_reset_repository->exec($request, $msg)) {
                 return response()->error([
                     AppConstants::KEY_MSG => $msg,
                 ]);
