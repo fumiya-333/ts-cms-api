@@ -63,6 +63,4 @@ class AppConstants
     const ERR_MSG_USER_REGIST_COMPLETED = '既に本登録されています。ログインを行いご利用下さい。';
     /** メール認証発効後24時間以上経過 */
     const ERR_MSG_EMAIL_AUTH_24HOURS_PASSED = 'メール認証の発行から24時間以上経過しています。再度アカウント設定を行って下さい。';
-    /** 未登録のメールアドレス */
-    const ERR_MSG_NOT_EXISTS = '未登録のメールアドレスです。';
 }

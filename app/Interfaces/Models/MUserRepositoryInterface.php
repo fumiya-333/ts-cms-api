@@ -13,7 +13,7 @@ interface MUserRepositoryInterface
         $email_verify_token,
         $email_verified_at
     );
-    public function update($m_user, $name, $email_verified, $email_verify_token, $email_verified_at);
+    public function update(&$m_user, $name, $email_verified, $email_verify_token, $email_verified_at);
     public function emailFindUser($email);
     public function emailVerifyTokenFindUser($email_verify_token);
     public function isCreated($m_user, &$msg);

@@ -43,30 +43,30 @@ class CreatePreRepository implements CreatePreRepositoryInterface
     public function exec(CreatePreRequest $request, &$msg) {
         $m_user = new MUser();
         // バリデーション処理
-        if (self::validate($request, $msg, $m_user)) {
+        if (self::validate($request, $m_user)) {
             // 仮登録処理実行
-            self::store($request, $msg);
+            self::store($request);
         } else {
             // 仮更新処理実行
-            self::update($request, $msg, $m_user);
+            self::update($request, $m_user);
         }
+        $msg = self::INFO_MSG;
     }
 
     /**
      * バリデーション処理
      *
      * @param  mixed $request リクエストパラメータ
-     * @param  mixed $msg エラーメッセージ
+     * @param  mixed $m_user ユーザー情報
      * @return バリデーション判定フラグ
      */
-    public function validate(CreatePreRequest $request, &$msg, &$m_user)
+    public function validate(CreatePreRequest $request, &$m_user)
     {
         $m_user = $this->m_user_repository->emailFindUser($request->email);
         // 既にデータ作成されているか判定
         if ($m_user->count()) {
             return false;
         }
-        $msg = self::INFO_MSG;
         return true;
     }
 
@@ -74,10 +74,9 @@ class CreatePreRepository implements CreatePreRepositoryInterface
      * 仮登録処理実行
      *
      * @param  mixed $request リクエストパラメータ
-     * @param  mixed $msg エラーメッセージ
      * @return void
      */
-    public function store(CreatePreRequest $request, &$msg)
+    public function store(CreatePreRequest $request)
     {
         DB::transaction(function () use ($request) {
             // ユーザー情報登録
@@ -100,13 +99,11 @@ class CreatePreRepository implements CreatePreRepositoryInterface
      * 仮更新処理実行
      *
      * @param  mixed $request リクエストパラメータ
-     * @param  mixed $msg エラーメッセージ
      * @param  mixed $m_user ユーザー情報
      * @return void
      */
-    public function update(CreatePreRequest $request, &$msg, $m_user){
-
-        $m_user = $this->m_user_repository->update(
+    public function update(CreatePreRequest $request, $m_user){
+        $this->m_user_repository->update(
             $m_user,
             $request->name,
             MUser::EMAIL_VERIFIED_OFF,

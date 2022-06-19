@@ -17,6 +17,8 @@ class PasswordResetPreRepository implements PasswordResetPreRepositoryInterface
 {
     /** 完了メッセージ */
     const INFO_MSG = '本登録を行う為のURLをメールにてお送りしました。24時間以内にメールをご覧いただき、本登録を行ってください。';
+    /** 未登録のメールアドレス */
+    const ERR_MSG_NOT_EXISTS = '未登録のメールアドレスです。';
 
     private MUserRepositoryInterface $m_user_repository;
     private SendMailRepositoryInterface $send_mail_repository;
@@ -32,6 +34,18 @@ class PasswordResetPreRepository implements PasswordResetPreRepositoryInterface
         $this->t_send_mail_repository = $t_send_mail_repository;
     }
 
+    public function exec(PasswordResetPreRequest $request, &$msg) {
+        $m_user = new MUser();
+        // バリデーション処理
+        if (self::validate($request, $msg, $m_user)) {
+            // 仮更新処理実行
+            self::update($request, $m_user);
+        } else {
+            return;
+        }
+        $msg = self::INFO_MSG;
+    }
+
     /**
      * バリデーション処理
      *
@@ -39,52 +53,61 @@ class PasswordResetPreRepository implements PasswordResetPreRepositoryInterface
      * @param  mixed $msg エラーメッセージ
      * @return バリデーション判定フラグ
      */
-    public function validate(PasswordResetPreRequest $request, &$msg)
+    public function validate(PasswordResetPreRequest $request, &$msg, &$m_user)
     {
         $m_user = $this->m_user_repository->emailFindUser($request->email);
-        // 仮登録メール判定
-        if (!$this->m_user_repository->isPasswordResetPred($m_user, $msg)) {
+        // 既にデータ作成されているか判定
+        if ($m_user->count()) {
+            $msg = self::ERR_MSG_NOT_EXISTS;
             return false;
         }
         return true;
     }
 
     /**
-     * パスワードリセット処理実行
+     * パスワード更新
      *
-     * @param  mixed $request
+     * @param  mixed $request リクエストパラメータ
+     * @param  mixed $msg エラーメッセージ
+     * @param  mixed $m_user ユーザー情報
      * @return void
      */
-    public function exec(PasswordResetPreRequest $request, &$msg)
+    public function update(PasswordResetPreRequest $request, &$m_user)
     {
         DB::transaction(function () use ($request) {
-            // メールアドレスに紐づくユーザー情報取得
-            $m_user = $this->m_user_repository->emailFindUser($request->email);
-
             // パスワードリセットトークン情報登録
             $this->m_user_repository->updatePasswordResetToken($m_user, StrUtil::getUuid());
 
-            // メール送信処理実行
-            $variables = [
-                MUser::COL_EMAIL => $m_user->email,
-                MUser::COL_EMAIL_PASSWORD_RESET_TOKEN => $m_user->email_password_reset_token,
-            ];
-            $email = $this->send_mail_repository->exec(
-                $m_user->email,
-                TSendMail::PASSWORD_RESET_EMAIL_SUBJECT,
-                $variables,
-                'emails.passwordResetPre'
-            );
-
-            // メール送信情報登録
-            $this->t_send_mail_repository->create(
-                StrUtil::getUuid(),
-                $m_user->email,
-                TSendMail::PASSWORD_RESET_EMAIL_SUBJECT,
-                $email->getMessage()
-            );
-
-            $msg = self::INFO_MSG;
+            // メール送信・情報登録
+            self::sendWithStoreMail($m_user);
         });
+    }
+
+    /**
+     * メール送信・情報登録
+     *
+     * @param  mixed $m_user ユーザー情報
+     * @return void
+     */
+    public function sendWithStoreMail($m_user) {
+        $variables = [
+            MUser::COL_EMAIL => $m_user->email,
+            MUser::COL_EMAIL_PASSWORD_RESET_TOKEN => $m_user->email_password_reset_token,
+        ];
+        // メール送信処理実行
+        $email = $this->send_mail_repository->exec(
+            $m_user->email,
+            TSendMail::PASSWORD_RESET_EMAIL_SUBJECT,
+            $variables,
+            'emails.passwordResetPre'
+        );
+
+        // メール送信情報登録
+        $this->t_send_mail_repository->create(
+            StrUtil::getUuid(),
+            $m_user->email,
+            TSendMail::PASSWORD_RESET_EMAIL_SUBJECT,
+            $email->getMessage()
+        );
     }
 }
