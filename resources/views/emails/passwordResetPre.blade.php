@@ -4,7 +4,7 @@
 このメールは、パスワードリセット手続きをされたお客様へ、ご登録アドレスの仮登録が完了した事と本登録の為の情報をお知らせする為にお届けしております。
 
 本登録を完了するには、以下のURLにアクセスして頂きますようお願い致します。
-{{ url(AppConstants::ROOT_DIR_USERS_PASSWORD_RESET . '/' . $email_password_reset_token) }}
+{{ url(AppConstants::ROOT_DIR_USERS_PASSWORD_RESET . '/?token=' . $email_password_reset_token) }}
 
 本メールにお心当たりのない方、メールの内容についてのお問い合わせは下記になります。
 fumiya0903613@gmail.com
