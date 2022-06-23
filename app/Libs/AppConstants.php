@@ -25,7 +25,7 @@ class AppConstants
     /** APIトークン名称 */
     const KEY_TOKEN_NAME = 'token-name';
     /** APIトークン */
-    const KEY_API_TOKEN = 'api_token';
+    const KEY_TOKEN = 'token';
     /** ハッシュ sha256 */
     const HASH_KEY_SHA256 = 'sha256';
 

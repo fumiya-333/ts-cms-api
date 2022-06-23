@@ -28,7 +28,7 @@ class LoginController extends Controller
         ) {
             $token = $request->user()->createToken(AppConstants::KEY_TOKEN_NAME);
             return response()->success([
-                AppConstants::KEY_API_TOKEN => $token->plainTextToken,
+                AppConstants::KEY_TOKEN => $token->plainTextToken,
             ]);
         } else {
             return response()->error([AppConstants::KEY_MSG => self::ERR_MSG]);
