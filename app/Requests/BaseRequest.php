@@ -9,9 +9,6 @@ use App\Libs\AppConstants;
 
 class BaseRequest extends FormRequest
 {
-    /**********************************************
-    /* エラーメッセージ
-    **********************************************/
     /** 未入力 */
     const ERR_MSG_REQUIRED = 'を入力して下さい。';
     /** パスワードとパスワード（確認用不一致） */
@@ -19,9 +16,6 @@ class BaseRequest extends FormRequest
     /** 未登録 */
     const ERR_MSG_NOT_REGIST = 'は登録されていません。';
 
-    /**********************************************
-    /* バリデーションルールキー
-    **********************************************/
     /** 入力チェック */
     const VALIDATION_RULE_KEY_REQUIRED = 'required';
     /** パスワードとパスワード（確認用）一致チェック */
